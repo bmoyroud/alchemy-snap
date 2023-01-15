@@ -2,6 +2,7 @@ import {
   OnRpcRequestHandler,
   OnTransactionHandler,
 } from '@metamask/snap-types';
+import { getInsights } from './insights';
 
 /**
  * Get a message from the origin. For demonstration purposes only.
@@ -53,6 +54,6 @@ export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
 export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
   console.log(transaction);
   return {
-    insights: { key: 'value' },
+    insights: await getInsights(transaction),
   };
 };
