@@ -43,6 +43,16 @@ export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
   }
 };
 
-export const onTransaction: OnTransactionHandler = ({ transaction }) => {
+/**
+ * Handle an incoming transaction, and return any insights.
+ *
+ * @param args - The request handler args as object.
+ * @param args.transaction - The transaction object.
+ * @returns The transaction insights.
+ */
+export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
   console.log(transaction);
+  return {
+    insights: { key: 'value' },
+  };
 };
