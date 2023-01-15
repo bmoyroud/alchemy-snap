@@ -80,15 +80,24 @@ export const sendContractTransaction = async () => {
     method: 'eth_requestAccounts',
   })) as string[];
 
+  enum TransactionConstants {
+    // Arbitrary contract that will revert any transactions that accidentally go through
+    Address = '0x08A8fDBddc160A7d5b957256b903dCAb1aE512C5',
+    // Some raw contract transaction data we will decode
+    UpdateWithdrawalAccount = '0x83ade3dc00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000047170ceae335a9db7e96b72de630389669b334710000000000000000000000006b175474e89094c44da98b954eedeac495271d0f',
+    UpdateMigrationMode = '0x2e26065e0000000000000000000000000000000000000000000000000000000000000000',
+    UpdateCap = '0x85b2c14a00000000000000000000000047170ceae335a9db7e96b72de630389669b334710000000000000000000000000000000000000000000000000de0b6b3a7640000',
+  }
+
   // Send a transaction to MetaMask.
   await window.ethereum.request({
     method: 'eth_sendTransaction',
     params: [
       {
         from: from,
-        to: '0x08A8fDBddc160A7d5b957256b903dCAb1aE512C5',
+        to: TransactionConstants.Address,
         value: '0x0',
-        data: '0x0',
+        data: TransactionConstants.UpdateWithdrawalAccount,
       },
     ],
   });
