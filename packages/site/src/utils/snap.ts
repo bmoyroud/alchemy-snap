@@ -59,7 +59,6 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
 /**
  * Invoke the "hello" method from the example snap.
  */
-
 export const sendHello = async () => {
   await window.ethereum.request({
     method: 'wallet_invokeSnap',
@@ -67,6 +66,29 @@ export const sendHello = async () => {
       defaultSnapOrigin,
       {
         method: 'hello',
+      },
+    ],
+  });
+};
+
+/**
+ * Send transaction from the example snap.
+ */
+export const sendContractTransaction = async () => {
+  // Get the user's account from MetaMask.
+  const [from] = (await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  })) as string[];
+
+  // Send a transaction to MetaMask.
+  await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [
+      {
+        from: from,
+        to: '0x08A8fDBddc160A7d5b957256b903dCAb1aE512C5',
+        value: '0x0',
+        data: '0x0',
       },
     ],
   });
