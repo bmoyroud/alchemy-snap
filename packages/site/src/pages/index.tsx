@@ -7,6 +7,7 @@ import {
   sendContractTransaction,
   sendHello,
   shouldDisplayReconnectButton,
+  transferUSDC,
 } from '../utils';
 import {
   ConnectButton,
@@ -137,6 +138,15 @@ const Index = () => {
     }
   };
 
+  const handleERC20TransferClick = async () => {
+    try {
+      await transferUSDC();
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
   return (
     <Container>
       <Heading>
@@ -220,6 +230,24 @@ const Index = () => {
             button: (
               <SendTransactionButton
                 onClick={handleSendTransactionClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'ERC20 - Transfer',
+            description: 'Transfer 1 USDC.',
+            button: (
+              <SendTransactionButton
+                onClick={handleERC20TransferClick}
                 disabled={!state.installedSnap}
               />
             ),

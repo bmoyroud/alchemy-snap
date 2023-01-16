@@ -103,4 +103,36 @@ export const sendContractTransaction = async () => {
   });
 };
 
+/**
+ * Transfer 1 USDC to random address.
+ */
+export const transferUSDC = async () => {
+  // Get the user's account from MetaMask.
+  const [from] = (await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  })) as string[];
+
+  enum TransactionConstants {
+    // USDC contract address
+    // Mainnet
+    Address = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    // Goerli
+    AddressGoerli = '0x07865c6E87B9F70255377e024ace6630C1Eaa37F',
+    Transfer = '0xa9059cbb000000000000000000000000fc43f5f9dd45258b3aff31bdbe6561d97e8b71de00000000000000000000000000000000000000000000000000000000000f4240',
+  }
+
+  // Send a transaction to MetaMask.
+  await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [
+      {
+        from: from,
+        to: TransactionConstants.AddressGoerli,
+        value: '0x0',
+        data: TransactionConstants.Transfer,
+      },
+    ],
+  });
+};
+
 export const isLocalSnap = (snapId: string) => snapId.startsWith('local:');
