@@ -217,7 +217,7 @@ async function getSimulationResult(
         {
           from: transaction.from,
           to: transaction.to,
-          value: '0x0',
+          value: transaction.value,
           data: transaction.data,
         },
       ],
