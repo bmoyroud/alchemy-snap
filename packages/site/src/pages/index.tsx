@@ -8,8 +8,10 @@ import {
   sendHello,
   shouldDisplayReconnectButton,
   transferUSDC,
-  unwrapWeth,
-  wrapEth,
+  unwrapWETH,
+  wrapETH,
+  swapETH,
+  swapUSDC,
 } from '../utils';
 import {
   ConnectButton,
@@ -151,7 +153,7 @@ const Index = () => {
 
   const handleWETHDepositClick = async () => {
     try {
-      await wrapEth();
+      await wrapETH();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -160,7 +162,7 @@ const Index = () => {
 
   const handleWETHWithdrawClick = async () => {
     try {
-      await unwrapWeth();
+      await unwrapWETH();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -169,7 +171,7 @@ const Index = () => {
 
   const handleSwapETHClick = async () => {
     try {
-      await transferUSDC();
+      await swapETH();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -178,7 +180,7 @@ const Index = () => {
 
   const handleSwapUSDCClick = async () => {
     try {
-      await transferUSDC();
+      await swapUSDC();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
