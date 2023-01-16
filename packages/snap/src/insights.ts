@@ -15,6 +15,7 @@ import { decode } from '@metamask/abi-utils';
  * @returns The transaction insights.
  */
 export async function getInsights(transaction: Record<string, unknown>) {
+  console.log(transaction);
   try {
     // Check if the transaction has data.
     if (
@@ -57,13 +58,13 @@ export async function getInsights(transaction: Record<string, unknown>) {
     );
 
     // Simulate the transaction
-    const assetChanges = await getSimulationAssetChanges(transaction);
+    const { changes, error } = await getSimulationResult(transaction);
 
     // Return the function name and decoded parameters.
     return {
       type: functionName,
       args: decodedParameters.map(normalize4ByteValue),
-      changes: assetChanges,
+      simulation: !error ? changes : error,
     };
   } catch (error) {
     console.error(error);
@@ -148,7 +149,49 @@ async function getFunctionsBySignature(
 }
 
 // The API endpoint to get a list of functions by 4 byte signature.
-const ALCHEMY_API_ENDPOINT = 'https://eth-mainnet.g.alchemy.com/v2/alch-demo';
+const ALCHEMY_API_ENDPOINT = 'https://eth-goerli.g.alchemy.com/v2/alch-demo';
+
+enum AssetType {
+  NATIVE = 'NATIVE',
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
+  ERC1155 = 'ERC1155',
+  SPECIAL_NFT = 'SPECIAL_NFT',
+}
+
+enum ChangeType {
+  APPROVE = 'APPROVE',
+  TRANSFER = 'TRANSFER',
+}
+
+interface AssetChange {
+  asset_type: AssetType;
+  change_type: ChangeType;
+  from: string;
+  to: string;
+
+  /* All - NATIVE, ERC20, ERC721, ERC1555, SPECIAL_NFT */
+  raw_amount: string;
+  amount: string;
+  name: string | null;
+  symbol: string;
+  decimals: number;
+
+  /* ERC20, ERC721, ERC1555, SPECIAL_NFT */
+  contract_address: string | null;
+
+  /* ERC20  */
+  logo: string | null;
+
+  /* ERC721, ERC1555  */
+  token_id: string | null;
+}
+
+/** Response object for the {@link TransactNamespace.simulateAssetChanges} method. */
+interface SimulateAssetChangesResponse {
+  changes: AssetChange[];
+  error: string;
+}
 
 /**
  * Gets the function name(s) for the given 4 byte signature.
@@ -158,9 +201,9 @@ const ALCHEMY_API_ENDPOINT = 'https://eth-mainnet.g.alchemy.com/v2/alch-demo';
  * @returns The function name(s) for the given 4 byte signature, or an empty
  * array if none are found.
  */
-async function getSimulationAssetChanges(
+async function getSimulationResult(
   transaction: Record<string, unknown>,
-): Promise<string[]> {
+): Promise<SimulateAssetChangesResponse> {
   const response = await fetch(ALCHEMY_API_ENDPOINT, {
     method: 'post',
     headers: {
@@ -172,10 +215,10 @@ async function getSimulationAssetChanges(
       id: 1,
       params: [
         {
-          from: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-          to: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          from: transaction.from,
+          to: transaction.to,
           value: '0x0',
-          data: '0xa9059cbb000000000000000000000000fc43f5f9dd45258b3aff31bdbe6561d97e8b71de00000000000000000000000000000000000000000000000000000000000f4240',
+          data: transaction.data,
         },
       ],
     }),
@@ -188,10 +231,6 @@ async function getSimulationAssetChanges(
   }
 
   // The response is an array of objects, each with a "text_signature" property.
-  const { result } = (await response.json()) as {
-    result: FourByteSignature[];
-  };
-  console.log(result);
-
-  return result.changes;
+  const { result } = await response.json();
+  return result;
 }
