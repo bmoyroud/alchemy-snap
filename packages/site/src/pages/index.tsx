@@ -2,12 +2,14 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
 import {
+  approveUSDC,
   connectSnap,
   getSnap,
-  sendContractTransaction,
   sendHello,
   shouldDisplayReconnectButton,
   transferUSDC,
+  unwrapWeth,
+  wrapEth,
 } from '../utils';
 import {
   ConnectButton,
@@ -129,9 +131,9 @@ const Index = () => {
     }
   };
 
-  const handleSendTransactionClick = async () => {
+  const handleERC20ApproveClick = async () => {
     try {
-      await sendContractTransaction();
+      await approveUSDC();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -139,6 +141,42 @@ const Index = () => {
   };
 
   const handleERC20TransferClick = async () => {
+    try {
+      await transferUSDC();
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
+  const handleWETHDepositClick = async () => {
+    try {
+      await wrapEth();
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
+  const handleWETHWithdrawClick = async () => {
+    try {
+      await unwrapWeth();
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
+  const handleSwapETHClick = async () => {
+    try {
+      await transferUSDC();
+    } catch (e) {
+      console.error(e);
+      dispatch({ type: MetamaskActions.SetError, payload: e });
+    }
+  };
+
+  const handleSwapUSDCClick = async () => {
     try {
       await transferUSDC();
     } catch (e) {
@@ -225,11 +263,12 @@ const Index = () => {
         />
         <Card
           content={{
-            title: 'Send contract transaction',
-            description: 'Insights',
+            title: 'ERC20 - Approve (WIP)',
+            description:
+              'Allow the Uniswap Protocol to use your USDC. Gives the Uniswap V3 smart contract permission to use your USDC.',
             button: (
               <SendTransactionButton
-                onClick={handleSendTransactionClick}
+                onClick={handleERC20ApproveClick}
                 disabled={!state.installedSnap}
               />
             ),
@@ -248,6 +287,86 @@ const Index = () => {
             button: (
               <SendTransactionButton
                 onClick={handleERC20TransferClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <code>
+          Add code blocks
+          {JSON.stringify(
+            { from: 'from', to: 'to', value: '0x0', data: 'data' },
+            null,
+            2,
+          )}
+        </code>
+        <Card
+          content={{
+            title: 'WETH - Deposit',
+            description: 'Wrap 1 ETH.',
+            button: (
+              <SendTransactionButton
+                onClick={handleWETHDepositClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'WETH - Withdraw',
+            description: 'Unwrap 1 WETH.',
+            button: (
+              <SendTransactionButton
+                onClick={handleWETHWithdrawClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'Uniswap V3 - Swap ETH',
+            description: 'Swap 1 ETH for USDC.',
+            button: (
+              <SendTransactionButton
+                onClick={handleSwapETHClick}
+                disabled={!state.installedSnap}
+              />
+            ),
+          }}
+          disabled={!state.installedSnap}
+          fullWidth={
+            state.isFlask &&
+            Boolean(state.installedSnap) &&
+            !shouldDisplayReconnectButton(state.installedSnap)
+          }
+        />
+        <Card
+          content={{
+            title: 'Uniswap V3 - Swap USDC',
+            description: 'Swap 1 USDC for UNI.',
+            button: (
+              <SendTransactionButton
+                onClick={handleSwapUSDCClick}
                 disabled={!state.installedSnap}
               />
             ),
