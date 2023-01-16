@@ -56,10 +56,14 @@ export async function getInsights(transaction: Record<string, unknown>) {
       add0x(transactionData.slice(8)),
     );
 
+    // Simulate the transaction
+    const assetChanges = await getSimulationAssetChanges(transaction);
+
     // Return the function name and decoded parameters.
     return {
       type: functionName,
       args: decodedParameters.map(normalize4ByteValue),
+      changes: assetChanges,
     };
   } catch (error) {
     console.error(error);
@@ -141,4 +145,53 @@ async function getFunctionsBySignature(
   return results
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .map((result) => result.text_signature);
+}
+
+// The API endpoint to get a list of functions by 4 byte signature.
+const ALCHEMY_API_ENDPOINT = 'https://eth-mainnet.g.alchemy.com/v2/alch-demo';
+
+/**
+ * Gets the function name(s) for the given 4 byte signature.
+ *
+ * @param signature - The 4 byte signature to get the function name(s) for. This
+ * should be a hex string prefixed with '0x'.
+ * @returns The function name(s) for the given 4 byte signature, or an empty
+ * array if none are found.
+ */
+async function getSimulationAssetChanges(
+  transaction: Record<string, unknown>,
+): Promise<string[]> {
+  const response = await fetch(ALCHEMY_API_ENDPOINT, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'alchemy_simulateAssetChanges',
+      id: 1,
+      params: [
+        {
+          from: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+          to: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          value: '0x0',
+          data: '0xa9059cbb000000000000000000000000fc43f5f9dd45258b3aff31bdbe6561d97e8b71de00000000000000000000000000000000000000000000000000000000000f4240',
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Unable to fetch simulation results": ${response.status} ${response.statusText}.`,
+    );
+  }
+
+  // The response is an array of objects, each with a "text_signature" property.
+  const { result } = (await response.json()) as {
+    result: FourByteSignature[];
+  };
+  console.log(result);
+
+  return result.changes;
 }
