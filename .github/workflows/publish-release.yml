@@ -1,8 +1,7 @@
 name: Publish Release
 
 on:
-  pull_request:
-    types: [closed]
+  push
 
 jobs:
   publish-release:
