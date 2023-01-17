@@ -124,15 +124,6 @@ const Index = () => {
     }
   };
 
-  const handleSendHelloClick = async () => {
-    try {
-      await sendHello();
-    } catch (e) {
-      console.error(e);
-      dispatch({ type: MetamaskActions.SetError, payload: e });
-    }
-  };
-
   const handleERC20ApproveClick = async () => {
     try {
       await approveUSDC();
@@ -190,19 +181,17 @@ const Index = () => {
 
   return (
     <Container>
-      <Heading>
+      {/* <Heading>
         Welcome to <Span>template-snap</Span>
-      </Heading>
-      <Subtitle>
-        Get started by editing <code>src/index.ts</code>
-      </Subtitle>
+      </Heading> */}
+      <Subtitle></Subtitle>
       <CardContainer>
         {state.error && (
           <ErrorMessage>
             <b>An error happened:</b> {state.error.message}
           </ErrorMessage>
         )}
-        {!state.isFlask && (
+        {!state.isFlask ? (
           <Card
             content={{
               title: 'Install',
@@ -212,175 +201,133 @@ const Index = () => {
             }}
             fullWidth
           />
+        ) : (
+          <>
+            {!state.installedSnap && (
+              <Card
+                content={{
+                  title: 'Connect',
+                  description:
+                    'Get started by connecting to and installing the Alchemy snap. Adds an additional tab to MetaMask called Alchemy Insights to show you the results of simulation.',
+                  button: (
+                    <ConnectButton
+                      onClick={handleConnectClick}
+                      disabled={!state.isFlask}
+                    />
+                  ),
+                }}
+                fullWidth
+                disabled={!state.isFlask}
+              />
+            )}
+
+            {shouldDisplayReconnectButton(state.installedSnap) && (
+              <Card
+                content={{
+                  title: 'Reconnect',
+                  description:
+                    'While connected to a local running snap this button will always be displayed in order to update the snap if a change is made.',
+                  button: (
+                    <ReconnectButton
+                      onClick={handleConnectClick}
+                      disabled={!state.installedSnap}
+                    />
+                  ),
+                }}
+                disabled={!state.installedSnap}
+                fullWidth
+              />
+            )}
+
+            {/* <Card
+              content={{
+                title: 'ERC20 - Approve (WIP)',
+                description:
+                  'Allow the Uniswap Protocol to use your USDC. Gives the Uniswap V3 smart contract permission to use your USDC.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleERC20ApproveClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            /> */}
+
+            <Card
+              content={{
+                title: 'ERC20 - Transfer',
+                description: 'Transfer 1 USDC to demo.eth.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleERC20TransferClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            />
+            <Card
+              content={{
+                title: 'WETH - Deposit',
+                description: 'Wrap 1 ETH.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleWETHDepositClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            />
+            <Card
+              content={{
+                title: 'WETH - Withdraw',
+                description: 'Unwrap 1 WETH.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleWETHWithdrawClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            />
+            <Card
+              content={{
+                title: 'Uniswap V3 - Swap ETH / MATIC',
+                description: 'Swap 1 ETH or 1 MATIC for USDC.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleSwapNativeClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            />
+            <Card
+              content={{
+                title: 'Uniswap V3 - Swap USDC',
+                description: 'Swap 1 USDC for UNI.',
+                button: (
+                  <SendTransactionButton
+                    onClick={handleSwapUSDCClick}
+                    disabled={!state.installedSnap}
+                  />
+                ),
+              }}
+              disabled={!state.installedSnap}
+              fullWidth
+            />
+          </>
         )}
-        {!state.installedSnap && (
-          <Card
-            content={{
-              title: 'Connect',
-              description:
-                'Get started by connecting to and installing the example snap.',
-              button: (
-                <ConnectButton
-                  onClick={handleConnectClick}
-                  disabled={!state.isFlask}
-                />
-              ),
-            }}
-            disabled={!state.isFlask}
-          />
-        )}
-        {shouldDisplayReconnectButton(state.installedSnap) && (
-          <Card
-            content={{
-              title: 'Reconnect',
-              description:
-                'While connected to a local running snap this button will always be displayed in order to update the snap if a change is made.',
-              button: (
-                <ReconnectButton
-                  onClick={handleConnectClick}
-                  disabled={!state.installedSnap}
-                />
-              ),
-            }}
-            disabled={!state.installedSnap}
-          />
-        )}
-        <Card
-          content={{
-            title: 'Send Hello message',
-            description:
-              'Display a custom message within a confirmation screen in MetaMask.',
-            button: (
-              <SendHelloButton
-                onClick={handleSendHelloClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <Card
-          content={{
-            title: 'ERC20 - Approve (WIP)',
-            description:
-              'Allow the Uniswap Protocol to use your USDC. Gives the Uniswap V3 smart contract permission to use your USDC.',
-            button: (
-              <SendTransactionButton
-                onClick={handleERC20ApproveClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <Card
-          content={{
-            title: 'ERC20 - Transfer',
-            description: 'Transfer 1 USDC.',
-            button: (
-              <SendTransactionButton
-                onClick={handleERC20TransferClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <code>
-          Add code blocks
-          {JSON.stringify(
-            { from: 'from', to: 'to', value: '0x0', data: 'data' },
-            null,
-            2,
-          )}
-        </code>
-        <Card
-          content={{
-            title: 'WETH - Deposit',
-            description: 'Wrap 1 ETH.',
-            button: (
-              <SendTransactionButton
-                onClick={handleWETHDepositClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <Card
-          content={{
-            title: 'WETH - Withdraw',
-            description: 'Unwrap 1 WETH.',
-            button: (
-              <SendTransactionButton
-                onClick={handleWETHWithdrawClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <Card
-          content={{
-            title: 'Uniswap V3 - Swap ETH / MATIC',
-            description: 'Swap 1 ETH or 1 MATIC for USDC.',
-            button: (
-              <SendTransactionButton
-                onClick={handleSwapNativeClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
-        <Card
-          content={{
-            title: 'Uniswap V3 - Swap USDC',
-            description: 'Swap 1 USDC for UNI.',
-            button: (
-              <SendTransactionButton
-                onClick={handleSwapUSDCClick}
-                disabled={!state.installedSnap}
-              />
-            ),
-          }}
-          disabled={!state.installedSnap}
-          fullWidth={
-            state.isFlask &&
-            Boolean(state.installedSnap) &&
-            !shouldDisplayReconnectButton(state.installedSnap)
-          }
-        />
+
         <Notice>
           <p>
             Please note that the <b>snap.manifest.json</b> and{' '}
