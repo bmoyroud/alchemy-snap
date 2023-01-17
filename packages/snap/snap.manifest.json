@@ -1,13 +1,13 @@
 {
   "version": "0.1.0",
   "description": "An example Snap written in TypeScript.",
-  "proposedName": "TypeScript Example Snap",
+  "proposedName": "Alchemy Insights",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/template-snap-monorepo.git"
   },
   "source": {
-    "shasum": "y/YOmXB7QwG5bTWuGpbT1of3pV6iA2lavDsav9NnJ5s=",
+    "shasum": "vAdmVNNQSV5HIxU60lGSGi9ww4/MBWOVH/NxrE0vy7Q=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
