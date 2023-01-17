@@ -5,7 +5,6 @@ import {
   approveUSDC,
   connectSnap,
   getSnap,
-  sendHello,
   shouldDisplayReconnectButton,
   transferUSDC,
   unwrap,
@@ -109,6 +108,8 @@ const ErrorMessage = styled.div`
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
 
+  const symbol = state.chainId === '0x13881' ? 'MATIC' : 'ETH';
+
   const handleConnectClick = async () => {
     try {
       await connectSnap();
@@ -184,7 +185,20 @@ const Index = () => {
       {/* <Heading>
         Welcome to <Span>template-snap</Span>
       </Heading> */}
-      <Subtitle></Subtitle>
+      {state.installedSnap && (
+        <Subtitle>
+          Examples - Ethereum Goerli and Polygon Mumbai. <br />
+          <br />
+          Simulation{' '}
+          <a
+            href="https://docs.alchemy.com/reference/simulation"
+            target="_blank"
+          >
+            available
+          </a>{' '}
+          for Ethereum, Polygon and Arbitrum.
+        </Subtitle>
+      )}
       <CardContainer>
         {state.error && (
           <ErrorMessage>
@@ -271,8 +285,8 @@ const Index = () => {
             />
             <Card
               content={{
-                title: 'WETH - Deposit',
-                description: 'Wrap 1 ETH.',
+                title: `W${symbol} - Deposit`,
+                description: `Wrap 1 ${symbol}.`,
                 button: (
                   <SendTransactionButton
                     onClick={handleWETHDepositClick}
@@ -281,12 +295,11 @@ const Index = () => {
                 ),
               }}
               disabled={!state.installedSnap}
-              fullWidth
             />
             <Card
               content={{
-                title: 'WETH - Withdraw',
-                description: 'Unwrap 1 WETH.',
+                title: `W${symbol} - Withdraw`,
+                description: `Unwrap 1 ${symbol}.`,
                 button: (
                   <SendTransactionButton
                     onClick={handleWETHWithdrawClick}
@@ -295,12 +308,11 @@ const Index = () => {
                 ),
               }}
               disabled={!state.installedSnap}
-              fullWidth
             />
             <Card
               content={{
-                title: 'Uniswap V3 - Swap ETH / MATIC',
-                description: 'Swap 1 ETH or 1 MATIC for USDC.',
+                title: `Uniswap V3 - Swap ${symbol}`,
+                description: `Swap 1 ${symbol} for USDC.`,
                 button: (
                   <SendTransactionButton
                     onClick={handleSwapNativeClick}
@@ -309,22 +321,24 @@ const Index = () => {
                 ),
               }}
               disabled={!state.installedSnap}
-              fullWidth
+              fullWidth={state.chainId !== '0x5'}
             />
-            <Card
-              content={{
-                title: 'Uniswap V3 - Swap USDC',
-                description: 'Swap 1 USDC for UNI.',
-                button: (
-                  <SendTransactionButton
-                    onClick={handleSwapUSDCClick}
-                    disabled={!state.installedSnap}
-                  />
-                ),
-              }}
-              disabled={!state.installedSnap}
-              fullWidth
-            />
+            {state.chainId === '0x5' && (
+              <Card
+                content={{
+                  title: 'Uniswap V3 - Swap USDC',
+                  description: 'Swap 1 USDC for UNI.',
+                  button: (
+                    <SendTransactionButton
+                      onClick={handleSwapUSDCClick}
+                      disabled={!state.installedSnap}
+                    />
+                  ),
+                }}
+                disabled={!state.installedSnap}
+                fullWidth={state.chainId !== '0x5'}
+              />
+            )}
           </>
         )}
 
