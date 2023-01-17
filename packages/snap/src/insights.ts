@@ -7,6 +7,15 @@ import {
 } from '@metamask/utils';
 import { decode } from '@metamask/abi-utils';
 
+const Providers = {
+  // chain id is hex with 0x
+  // see https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+  // 'eip155:1': 'https://eth-mainnet.g.alchemy.com/v2/alch-demo',
+  'eip155:5': 'https://eth-goerli.g.alchemy.com/v2/alch-demo',
+  // 'eip155:89': 'https://polygon-mainnet.g.alchemy.com/v2/alch-demo',
+  'eip155:13881': 'https://polygon-mumbai.g.alchemy.com/v2/alch-demo',
+};
+
 /**
  * As an example, get transaction insights by looking at the transaction data
  * and attempting to decode it.
@@ -14,8 +23,10 @@ import { decode } from '@metamask/abi-utils';
  * @param transaction - The transaction to get insights for.
  * @returns The transaction insights.
  */
-export async function getInsights(transaction: Record<string, string>) {
-  console.log(transaction);
+export async function getInsights(
+  transaction: Record<string, unknown>,
+  chainId: string,
+) {
   try {
     // Check if the transaction has data.
     if (
@@ -28,9 +39,14 @@ export async function getInsights(transaction: Record<string, string>) {
       };
     }
 
-    // Simulate the transaction
-    const { changes, error } = await getSimulationResult(transaction);
+    if (!Object.keys(Providers).includes(chainId)) {
+      return {
+        type: `Simulation not currently supported on this network (${chainId}).`,
+      };
+    }
 
+    // Simulate the transaction
+    const { changes, error } = await getSimulationResult(transaction, chainId);
     const _out =
       changes.length > 0
         ? changes
@@ -54,13 +70,11 @@ export async function getInsights(transaction: Record<string, string>) {
   } catch (error) {
     console.error(error);
     return {
-      type: 'Unknown transaction',
+      type: 'Encountered error',
+      error: JSON.stringify(error, null, 2),
     };
   }
 }
-
-// The API endpoint to get a list of functions by 4 byte signature.
-const ALCHEMY_API_ENDPOINT = 'https://eth-goerli.g.alchemy.com/v2/alch-demo';
 
 enum AssetType {
   NATIVE = 'NATIVE',
@@ -114,8 +128,10 @@ interface SimulateAssetChangesResponse {
  */
 async function getSimulationResult(
   transaction: Record<string, unknown>,
-): Promise<SimulateAssetChangesResponse> {
-  const response = await fetch(ALCHEMY_API_ENDPOINT, {
+  chainId: string,
+): Promise<SimulateAssetChangesResponse | string> {
+  const url = Providers[chainId];
+  const response = await fetch(url, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
@@ -137,11 +153,11 @@ async function getSimulationResult(
 
   if (!response.ok) {
     throw new Error(
-      `Unable to fetch simulation results": ${response.status} ${response.statusText}.`,
+      `Unable to fetch simulation results": ${url} ${response.status} ${response.statusText}.`,
     );
   }
 
-  // The response is an array of objects, each with a "text_signature" property.
-  const { result } = await response.json();
-  return result;
+  const json = await response.json();
+  console.log(json);
+  return json.result;
 }

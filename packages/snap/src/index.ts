@@ -51,9 +51,12 @@ export const onRpcRequest: OnRpcRequestHandler = ({ origin, request }) => {
  * @param args.transaction - The transaction object.
  * @returns The transaction insights.
  */
-export const onTransaction: OnTransactionHandler = async ({ transaction }) => {
-  console.log(transaction);
+export const onTransaction: OnTransactionHandler = async ({
+  transaction,
+  chainId,
+}) => {
+  console.log(JSON.stringify(transaction, null, 2), chainId);
   return {
-    insights: await getInsights(transaction),
+    insights: await getInsights(transaction, chainId),
   };
 };

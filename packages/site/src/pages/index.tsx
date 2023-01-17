@@ -8,9 +8,9 @@ import {
   sendHello,
   shouldDisplayReconnectButton,
   transferUSDC,
-  unwrapWETH,
-  wrapETH,
-  swapETH,
+  unwrap,
+  wrap,
+  swapNative,
   swapUSDC,
 } from '../utils';
 import {
@@ -144,6 +144,7 @@ const Index = () => {
 
   const handleERC20TransferClick = async () => {
     try {
+      // check if user has USDC before by calling balanceOf on smart contract
       await transferUSDC();
     } catch (e) {
       console.error(e);
@@ -153,7 +154,7 @@ const Index = () => {
 
   const handleWETHDepositClick = async () => {
     try {
-      await wrapETH();
+      await wrap();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -162,16 +163,16 @@ const Index = () => {
 
   const handleWETHWithdrawClick = async () => {
     try {
-      await unwrapWETH();
+      await unwrap();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
     }
   };
 
-  const handleSwapETHClick = async () => {
+  const handleSwapNativeClick = async () => {
     try {
-      await swapETH();
+      await swapNative();
     } catch (e) {
       console.error(e);
       dispatch({ type: MetamaskActions.SetError, payload: e });
@@ -346,11 +347,11 @@ const Index = () => {
         />
         <Card
           content={{
-            title: 'Uniswap V3 - Swap ETH',
-            description: 'Swap 1 ETH for USDC.',
+            title: 'Uniswap V3 - Swap ETH / MATIC',
+            description: 'Swap 1 ETH or 1 MATIC for USDC.',
             button: (
               <SendTransactionButton
-                onClick={handleSwapETHClick}
+                onClick={handleSwapNativeClick}
                 disabled={!state.installedSnap}
               />
             ),
