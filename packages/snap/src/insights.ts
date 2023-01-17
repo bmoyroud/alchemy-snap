@@ -10,10 +10,10 @@ import { decode } from '@metamask/abi-utils';
 const Providers = {
   // chain id is hex with 0x
   // see https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-  // 'eip155:1': 'https://eth-mainnet.g.alchemy.com/v2/alch-demo',
-  'eip155:5': 'https://eth-goerli.g.alchemy.com/v2/alch-demo',
-  // 'eip155:89': 'https://polygon-mainnet.g.alchemy.com/v2/alch-demo',
-  'eip155:13881': 'https://polygon-mumbai.g.alchemy.com/v2/alch-demo',
+  // 'eip155:1': 'https://eth-mainnet.g.alchemy.com/v2/simulation-demo',
+  'eip155:5': 'https://eth-goerli.g.alchemy.com/v2/simulation-demo',
+  // 'eip155:89': 'https://polygon-mainnet.g.alchemy.com/v2/simulation-demo',
+  'eip155:13881': 'https://polygon-mumbai.g.alchemy.com/v2/simulation-demo',
 };
 
 /**
