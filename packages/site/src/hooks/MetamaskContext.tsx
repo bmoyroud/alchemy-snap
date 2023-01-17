@@ -7,11 +7,12 @@ import {
   useReducer,
 } from 'react';
 import { Snap } from '../types';
-import { isFlask, getSnap } from '../utils';
+import { isFlask, getSnap, getChainId } from '../utils';
 
 export type MetamaskState = {
   isFlask: boolean;
   installedSnap?: Snap;
+  chainId?: string;
   error?: Error;
 };
 
@@ -35,6 +36,7 @@ export enum MetamaskActions {
   SetInstalled = 'SetInstalled',
   SetFlaskDetected = 'SetFlaskDetected',
   SetError = 'SetError',
+  SetChain = 'SetChain',
 }
 
 const reducer: Reducer<MetamaskState, MetamaskDispatch> = (state, action) => {
@@ -55,6 +57,12 @@ const reducer: Reducer<MetamaskState, MetamaskDispatch> = (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+
+    case MetamaskActions.SetChain:
+      return {
+        ...state,
+        chainId: action.payload,
       };
 
     default:
@@ -94,10 +102,19 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
+    async function detectChain() {
+      const chainId = await getChainId();
+      dispatch({
+        type: MetamaskActions.SetChain,
+        payload: chainId,
+      });
+    }
+
     detectFlask();
 
     if (state.isFlask) {
       detectSnapInstalled();
+      detectChain();
     }
   }, [state.isFlask, window.ethereum]);
 
@@ -119,6 +136,18 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
       }
     };
   }, [state.error]);
+
+  window.ethereum.on('chainChanged', (chainId) => {
+    dispatch({
+      type: MetamaskActions.SetChain,
+      payload: chainId,
+    });
+
+    // Handle the new chain.
+    // Correctly handling chain changes can be complicated.
+    // We recommend reloading the page unless you have good reason not to.
+    // window.location.reload();
+  });
 
   return (
     <MetaMaskContext.Provider value={[state, dispatch]}>

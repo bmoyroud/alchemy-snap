@@ -57,18 +57,16 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
 };
 
 /**
- * Invoke the "hello" method from the example snap.
+ * Get chain id from MetaMask.
+ *
+ * @returns The chain id returned by the extension.
  */
-export const sendHello = async () => {
-  await window.ethereum.request({
-    method: 'wallet_invokeSnap',
-    params: [
-      defaultSnapOrigin,
-      {
-        method: 'hello',
-      },
-    ],
+export const getChainId = async (): Promise<string> => {
+  const chainId = await window.ethereum.request({
+    method: 'eth_chainId',
   });
+  console.log(chainId);
+  return chainId;
 };
 
 /**
@@ -112,45 +110,43 @@ const Methods = {
   SwapUSDCForUNI: '',
 };
 
+export const Networks = {
+  // '0x1': {
+  //   chainId: 1,
+  //   name: 'Ethereum Mainnet',
+  //   USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  //   Wrapped: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  //   Uniswap: '',
+  // },
+  '0x5': {
+    chainId: 5,
+    name: 'Ethereum Goerli',
+    USDC: '0x07865c6E87B9F70255377e024ace6630C1Eaa37F',
+    Wrapped: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+    UniswapAddress: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
+  },
+  // '0x89': {
+  //   chainId: 137,
+  //   name: 'Polygon Mainnet',
+  //   USDC: '',
+  //   Wrapped: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  //   Uniswap: '',
+  // },
+  '0x13881': {
+    chainId: 80001,
+    name: 'Polygon Mumbai',
+    USDC: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
+    Wrapped: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+    UniswapAddress: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
+  },
+};
+
 const getNetwork = async () => {
   // https://developers.circle.com/developer/docs/usdc-on-testnet
   // https://docs.uniswap.org/contracts/v3/reference/deployments (SwapRouter02)
-  const Networks = {
-    // '0x1': {
-    //   chainId: 1,
-    //   name: 'Ethereum Mainnet',
-    //   USDC: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    //   Wrapped: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    //   Uniswap: '',
-    // },
-    '0x5': {
-      chainId: 5,
-      name: 'Ethereum Goerli',
-      USDC: '0x07865c6E87B9F70255377e024ace6630C1Eaa37F',
-      Wrapped: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
-      UniswapAddress: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
-    },
-    // '0x89': {
-    //   chainId: 137,
-    //   name: 'Polygon Mainnet',
-    //   USDC: '',
-    //   Wrapped: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-    //   Uniswap: '',
-    // },
-    '0x13881': {
-      chainId: 80001,
-      name: 'Polygon Mumbai',
-      USDC: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
-      Wrapped: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
-      UniswapAddress: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
-    },
-  };
 
   // Get current chain from MetaMask.
-  const chainId = await window.ethereum.request({
-    method: 'eth_chainId',
-  });
-  console.log(chainId);
+  const chainId = await getChainId();
   return Networks[chainId];
 };
 
