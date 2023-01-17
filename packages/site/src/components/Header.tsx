@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
-import { connectSnap, getThemePreference, getSnap } from '../utils';
+import { connectSnap, getThemePreference, getSnap, Networks } from '../utils';
 import { HeaderButtons } from './Buttons';
 import { SnapLogo } from './SnapLogo';
 import { Toggle } from './Toggle';
@@ -37,6 +37,10 @@ const RightContainer = styled.div`
   align-items: center;
 `;
 
+const ChainWrapper = styled.div`
+  margin-right: 20px;
+`;
+
 export const Header = ({
   handleToggleClick,
 }: {
@@ -63,10 +67,13 @@ export const Header = ({
   return (
     <HeaderWrapper>
       <LogoWrapper>
-        <SnapLogo color={theme.colors.icon.default} size={36} />
-        <Title>Alchemy Examples</Title>
+        {/* <SnapLogo color={theme.colors.icon.default} size={36} /> */}
+        <Title>Alchemy Simulation - Examples</Title>
       </LogoWrapper>
       <RightContainer>
+        <ChainWrapper>
+          {Networks[state.chainId] && Networks[state.chainId].name}
+        </ChainWrapper>
         <Toggle
           onToggle={handleToggleClick}
           defaultChecked={getThemePreference()}
