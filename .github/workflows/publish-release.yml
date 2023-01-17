@@ -40,7 +40,7 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.YARN_CACHE_DIR }}
           key: yarn-cache-${{ runner.os }}-${{ steps.yarn-version.outputs.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
       - run: yarn install --immutable
-      - run: yarn build:site
+      - run: yarn build
       - name: Publish to GitHub Pages
         uses: MetaMask/action-publish-gh-pages@v2
         with:
