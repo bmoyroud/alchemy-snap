@@ -182,23 +182,15 @@ const Index = () => {
 
   return (
     <Container>
-      {/* <Heading>
-        Welcome to <Span>template-snap</Span>
-      </Heading> */}
-      {state.installedSnap && (
-        <Subtitle>
-          Examples - Ethereum Goerli and Polygon Mumbai. <br />
-          <br />
-          Simulation{' '}
-          <a
-            href="https://docs.alchemy.com/reference/simulation"
-            target="_blank"
-          >
-            available
-          </a>{' '}
-          for Ethereum, Polygon and Arbitrum.
-        </Subtitle>
-      )}
+      <Subtitle>
+        Examples - Ethereum Goerli and Polygon Mumbai. <br />
+        <br />
+        Simulation{' '}
+        <a href="https://docs.alchemy.com/reference/simulation" target="_blank">
+          available
+        </a>{' '}
+        for Ethereum, Polygon and Arbitrum.
+      </Subtitle>
       <CardContainer>
         {state.error && (
           <ErrorMessage>
