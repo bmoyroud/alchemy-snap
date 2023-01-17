@@ -93,24 +93,36 @@ export const Toggle = ({
   onToggle,
   defaultChecked = false,
 }: {
-  onToggle(): void;
+  onToggle(): Promise<boolean>;
   defaultChecked?: boolean;
 }) => {
   const [checked, setChecked] = useState(defaultChecked);
 
-  const handleChange = () => {
-    onToggle();
-    setChecked(!checked);
+  const handleChange = async () => {
+    const isSuccess = await onToggle();
+    if (isSuccess) {
+      setChecked(!checked);
+    }
   };
 
   return (
     <ToggleWrapper onClick={handleChange}>
       <ToggleContainer>
         <CheckedContainer checked={checked}>
-          <span>🌞</span>
+          <span>
+            <img
+              src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=024"
+              width={10}
+            />
+          </span>
         </CheckedContainer>
         <UncheckedContainer checked={checked}>
-          <span>🌜</span>
+          <span>
+            <img
+              src="https://cryptologos.cc/logos/polygon-matic-logo.svg?v=024"
+              width={15}
+            />
+          </span>
         </UncheckedContainer>
       </ToggleContainer>
       <ToggleCircle checked={checked} />

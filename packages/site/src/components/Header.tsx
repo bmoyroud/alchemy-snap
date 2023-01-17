@@ -1,7 +1,15 @@
 import { useContext } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { MetamaskActions, MetaMaskContext } from '../hooks';
-import { connectSnap, getThemePreference, getSnap, Networks } from '../utils';
+import {
+  connectSnap,
+  getThemePreference,
+  getSnap,
+  Networks,
+  switchChain,
+  addChain,
+  Chains,
+} from '../utils';
 import { HeaderButtons } from './Buttons';
 import { SnapLogo } from './SnapLogo';
 import { Toggle } from './Toggle';
@@ -41,13 +49,33 @@ const ChainWrapper = styled.div`
   margin-right: 20px;
 `;
 
-export const Header = ({
-  handleToggleClick,
-}: {
-  handleToggleClick(): void;
-}) => {
+export const Header = () => {
   const theme = useTheme();
   const [state, dispatch] = useContext(MetaMaskContext);
+
+  const handleToggleClick = async () => {
+    const chainId =
+      state.chainId === Chains.ETH_GOERLI
+        ? Chains.POLYGON_MUMBAI
+        : Chains.ETH_GOERLI;
+
+    try {
+      await switchChain(chainId);
+      return true;
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await addChain(chainId);
+        } catch (addError) {
+          // handle "add" error
+          return false;
+        }
+      }
+      // handle other "switch" errors
+      return false;
+    }
+  };
 
   const handleConnectClick = async () => {
     try {
@@ -76,7 +104,7 @@ export const Header = ({
         </ChainWrapper>
         <Toggle
           onToggle={handleToggleClick}
-          defaultChecked={getThemePreference()}
+          // defaultChecked={getThemePreference()}
         />
         <HeaderButtons state={state} onConnectClick={handleConnectClick} />
       </RightContainer>
