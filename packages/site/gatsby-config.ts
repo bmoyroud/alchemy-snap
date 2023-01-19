@@ -1,6 +1,8 @@
 import { GatsbyConfig } from 'gatsby';
 
 const config: GatsbyConfig = {
+  pathPrefix: `/alchemy-snap`,
+
   // This is required to make use of the React 17+ JSX transform.
   jsxRuntime: 'automatic',
 
