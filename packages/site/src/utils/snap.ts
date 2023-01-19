@@ -77,18 +77,24 @@ export const connectSnap = async (
   snapId: string = defaultSnapOrigin,
   params: Record<'version' | string, unknown> = {},
 ) => {
-  await window.ethereum.request({
-    method: 'wallet_enable',
-    params: [
-      {
-        wallet_snap: {
-          [snapId]: {
-            ...params,
+  console.log(snapId, params);
+
+  try {
+    await window.ethereum.request({
+      method: 'wallet_enable',
+      params: [
+        {
+          wallet_snap: {
+            [snapId]: {
+              ...params,
+            },
           },
         },
-      },
-    ],
-  });
+      ],
+    });
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 /**
@@ -100,7 +106,6 @@ export const connectSnap = async (
 export const getSnap = async (version?: string): Promise<Snap | undefined> => {
   try {
     const snaps = await getSnaps();
-
     return Object.values(snaps).find(
       (snap) =>
         snap.id === defaultSnapOrigin && (!version || snap.version === version),
